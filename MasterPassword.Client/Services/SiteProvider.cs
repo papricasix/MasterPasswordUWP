@@ -24,9 +24,9 @@ namespace MasterPasswordUWP.Services
 
     public interface ISiteImporterExporter
     {
-        void Import(StorageFile file);
+        Task Import(StorageFile file);
 
-        void Export(StorageFile file);
+        Task Export(StorageFile file);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ namespace MasterPasswordUWP.Services
             _settings = settings;
         }
 
-        public async void Import(StorageFile file)
+        public async Task Import(StorageFile file)
         {
             if (file == null)
             {
@@ -98,7 +98,7 @@ namespace MasterPasswordUWP.Services
             _siteProvider.Sites = null;
         }
 
-        public async void Export(StorageFile file)
+        public async Task Export(StorageFile file)
         {
             if ( file == null )
             {

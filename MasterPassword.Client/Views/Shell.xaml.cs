@@ -104,9 +104,10 @@ namespace MasterPasswordUWP.Views
 
             var picker = new FileOpenPicker { FileTypeFilter = { ".json" }, ViewMode = PickerViewMode.List, SuggestedStartLocation = PickerLocationId.DocumentsLibrary };
             var file = await picker.PickSingleFileAsync();
-            await Task.Run(() => App.Container.Resolve<ISiteImporterExporter>().Import(file));
+            //await Task.Run(() => App.Container.Resolve<ISiteImporterExporter>().Import(file));
+            await App.Container.Resolve<ISiteImporterExporter>().Import(file);
 
-            NavigationService.Navigate(typeof(Views.SitesPage), new SitesPageViewModelParameter {ParameterType = SitesPageViewModelParameterType.RefreshView});
+            NavigationService.Navigate(typeof(Views.SitesPage), new SitesPageViewModelParameter { ParameterType = SitesPageViewModelParameterType.RefreshView });
         }
 
         private async void ExportButton_OnTappedButton_OnTapped(object sender, RoutedEventArgs e)
