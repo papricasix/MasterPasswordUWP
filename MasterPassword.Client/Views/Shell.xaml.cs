@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Resources;
 using Windows.Storage.Pickers;
 using Template10.Common;
 using Template10.Controls;
@@ -80,13 +81,14 @@ namespace MasterPasswordUWP.Views
 
         private static async Task<ContentDialogResult> DisplayImportWarnDialog()
         {
-            var dialog = new ContentDialog()
+            var rl = ResourceLoader.GetForCurrentView();
+            var dialog = new ContentDialog
             {
-                Title = "Importing Sites",
-                Content = "Importing another file will overwrite your current sites. Do you want to continue?",
-                PrimaryButtonText = "No",
+                Title = rl.GetString("Messages_ImportSites_Title"),
+                Content = rl.GetString("Messages_ImportSites_Content"),
+                PrimaryButtonText = rl.GetString("Messages_ImportSites_PrimaryButtonText"),
                 PrimaryButtonCommandParameter = true,
-                SecondaryButtonText = "Yes",
+                SecondaryButtonText = rl.GetString("Messages_ImportSites_SecondaryButtonText"),
                 SecondaryButtonCommandParameter = false,
             };
 

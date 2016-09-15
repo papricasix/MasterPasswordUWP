@@ -13,9 +13,11 @@ using System.Text.RegularExpressions;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Autofac;
 using MasterPasswordUWP.Services;
@@ -54,6 +56,12 @@ namespace MasterPasswordUWP
         {
             InitializeComponent();
             SplashFactory = e => new Views.Splash(e);
+
+            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0))
+            {
+                //var statusBar = StatusBar
+                throw new NullReferenceException("statusbar found!");
+            }
 
             // Xbox one stuff
             //ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);

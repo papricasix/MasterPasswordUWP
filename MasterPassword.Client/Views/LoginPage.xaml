@@ -47,7 +47,7 @@
         </VisualStateManager.VisualStateGroups>
 
         <!--  header  -->
-        <controls:PageHeader x:Name="PageHeader" Content="Provide your credentials"
+        <controls:PageHeader x:Uid="LoginPageHeader" x:Name="PageHeader" Content="Provide your credentials"
                              Frame="{x:Bind Frame}"
                              RelativePanel.AlignLeftWithPanel="True"
                              RelativePanel.AlignRightWithPanel="True"
@@ -62,17 +62,17 @@
             <StackPanel Orientation="Vertical">
 
                 <TextBlock TextAlignment="Center" Margin="0,16,16,16" x:Name="IdentIconText" Text=""
-                           Style="{ThemeResource TitleTextBlockStyle}"/>
-                
-                <TextBlock Text="Your Name" Margin="0,16,0,16" />
-                <TextBox Text="{x:Bind ViewModel.UserName, Mode=TwoWay}" Margin="0,0,16,16"
-                         x:Name="UserNameBox" TextChanged="UserNameBox_OnTextChanged"/>
+                           Style="{ThemeResource TitleTextBlockStyle}" IsColorFontEnabled="False" />
 
-                <TextBlock Text="Master Password" Margin="0,16,0,16" />
-                <PasswordBox Password="{x:Bind ViewModel.MasterPassword, Mode=TwoWay}" Margin="0,0,16,16" 
-                             x:Name="PasswordBox" PasswordChanged="PasswordBox_OnPasswordChanged"/>
+                <TextBox x:Uid="YourNameTextBox" Text="{x:Bind ViewModel.UserName, Mode=TwoWay}" Margin="0,0,16,16"
+                         x:Name="UserNameBox" TextChanged="UserNameBox_OnTextChanged"
+                         Header="Your Name" />
 
-                <Button Content="Login" RelativePanel.AlignRightWith="PasswordBox" Margin="0,0,16,16"
+                <PasswordBox x:Uid="MasterPasswordTextBox" Password="{x:Bind ViewModel.MasterPassword, Mode=TwoWay}" Margin="0,16,16,16" 
+                             x:Name="PasswordBox" PasswordChanged="PasswordBox_OnPasswordChanged"
+                             Header="Master Password" />
+
+                <Button x:Uid="LoginButton" Content="Login" RelativePanel.AlignRightWith="PasswordBox" Margin="0,16,16,16"
                         HorizontalAlignment="Right" MinWidth="100" Click="LoginButton_OnClick" />
 
             </StackPanel>

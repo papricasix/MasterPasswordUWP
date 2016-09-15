@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Template10.Services.NavigationService;
 using Windows.UI.Xaml.Navigation;
 using Autofac;
+using MasterPassword.Common.Models;
 using MasterPasswordUWP.Algorithm;
 using MasterPasswordUWP.CollectionTools;
 using MasterPasswordUWP.Models;
@@ -38,7 +39,7 @@ namespace MasterPasswordUWP.ViewModels
         {
             if (value is SitesOrder)
             {
-                return Enum.GetName(typeof(SitesOrder), value);
+                return ((SitesOrder)value).ToHumanReadableString();
             }
             return value;
         }
@@ -47,7 +48,7 @@ namespace MasterPasswordUWP.ViewModels
         {
             if (value is string)
             {
-                return Enum.Parse(typeof(SitesOrder), (string) value);
+                return ((string)value).FromHumanReadableString(typeof(SitesOrder), SitesOrder.Name);
             }
             return value;
         }
@@ -102,7 +103,7 @@ namespace MasterPasswordUWP.ViewModels
             {
             }
 
-            SiteOrders = Enum.GetValues(typeof(SitesOrder)).Cast<SitesOrder>().Select(order => order.ToString());
+            SiteOrders = Enum.GetValues(typeof(SitesOrder)).Cast<SitesOrder>().Select(order => order.ToHumanReadableString());
             FilteredSites = new FilterableCollectionView<ISite>();
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Resources;
 using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -59,7 +60,7 @@ namespace MasterPasswordUWP.Views
         {
             if (!string.IsNullOrEmpty(PasswordBox.Password))
             {
-                Views.Busy.SetBusy(true, "Generating master key...");
+                Views.Busy.SetBusy(true, ResourceLoader.GetForCurrentView().GetString("BusyMessage_GeneratingMasterKey"));
                 // generate master password stuff
                 var userName = UserNameBox.Text;
                 var password = PasswordBox.Password.ToCharArray();

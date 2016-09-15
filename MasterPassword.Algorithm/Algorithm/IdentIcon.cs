@@ -9,7 +9,7 @@ namespace MasterPasswordUWP.Algorithm
     {
         // https://github.com/Lyndir/MasterPassword/blob/master/MasterPassword/Java/masterpassword-algorithm/src/main/java/com/lyndir/masterpassword/MPIdenticon.java
 
-        private static readonly Color[] Colors = { Windows.UI.Colors.Crimson, Windows.UI.Colors.Green, Windows.UI.Colors.DarkGoldenrod, Windows.UI.Colors.CornflowerBlue, Windows.UI.Colors.DarkOrchid, Windows.UI.Colors.DarkTurquoise, Windows.UI.Colors.Black };
+        private static readonly Color[] Colors = { Windows.UI.Colors.Crimson, Windows.UI.Colors.Green, Windows.UI.Colors.DarkGoldenrod, Windows.UI.Colors.CornflowerBlue, Windows.UI.Colors.DarkOrchid, Windows.UI.Colors.DarkTurquoise, Windows.UI.Colors.Gray/*was: Black*/ };
         private static readonly char[] LeftArm = { '╔', '╚', '╰', '═' };
         private static readonly char[] RightArm = { '╗', '╝', '╯', '═' };
         private static readonly char[] Body = { '█', '░', '▒', '▓', '☺', '☻' };

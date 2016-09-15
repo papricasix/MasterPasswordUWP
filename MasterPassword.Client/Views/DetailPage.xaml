@@ -9,16 +9,20 @@
       xmlns:local="using:MasterPasswordUWP.Views"
       xmlns:models="using:MasterPasswordUWP.Models"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:vm="using:MasterPasswordUWP.ViewModels" x:Name="ThisPage"
+      xmlns:vm="using:MasterPasswordUWP.ViewModels"
+      xmlns:validation="using:Template10.Controls.Validation"
+      x:Name="ThisPage"
       mc:Ignorable="d">
 
     <Page.DataContext>
         <vm:DetailPageViewModel x:Name="ViewModel" />
     </Page.DataContext>
-    
+
     <Page.Resources>
         <vm:ComboboxItemPasswordTypeConverter x:Key="ComboboxItemPasswordTypeConverter" />
         <vm:SliderDoubleIntConverter x:Key="SliderDoubleIntConverter" />
+        <vm:VisibleWhenFalseConverter x:Key="VisibleWhenFalseConverter" />
+        <vm:BorderBrushBooleanConverter x:Key="BorderBrushBooleanConverter" TrueBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" />
     </Page.Resources>
 
     <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -53,10 +57,10 @@
         </VisualStateManager.VisualStateGroups>
 
         <!--  header  -->
-        <controls:PageHeader x:Name="PageHeader" Frame="{x:Bind Frame}"
+        <controls:PageHeader x:Uid="DetailPageHeader" x:Name="PageHeader" Frame="{x:Bind Frame}"
                              RelativePanel.AlignLeftWithPanel="True"
                              RelativePanel.AlignRightWithPanel="True"
-                             RelativePanel.AlignTopWithPanel="True" Text="Detail Page" />
+                             RelativePanel.AlignTopWithPanel="True" Content="Detail Page" />
 
         <!--  content  -->
         <ScrollViewer Padding="12,8,0,0" RelativePanel.AlignBottomWithPanel="True"
@@ -64,33 +68,38 @@
                       RelativePanel.AlignRightWithPanel="True"
                       RelativePanel.Below="PageHeader"
                       VerticalScrollBarVisibility="Auto">
-            
-            <StackPanel Orientation="Vertical">
-                
-                <TextBlock Text="Site Name" Margin="0,16,0,16" />
-                <TextBox Text="{x:Bind ViewModel.Site.SiteName, Mode=TwoWay}" Margin="0,0,16,16"/>
-                
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Login Name" Margin="0,16,8,16" />
-                    <TextBlock Text="(optional)" Margin="0,16,0,16" Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" />
-                </StackPanel>
-                <TextBox Text="{x:Bind ViewModel.Site.UserName, Mode=TwoWay}" Margin="0,0,16,16"/>
 
-                <TextBlock Text="Password Type" Margin="0,16,0,16" />
-                <ComboBox Margin="0,0,0,16" MinWidth="120" MaxWidth="200" ItemsSource="{x:Bind ViewModel.PasswordTypes}" 
+            <StackPanel Orientation="Vertical">
+
+                <TextBox x:Name="SiteNameTextBox" x:Uid="SiteNameTextBox" Text="{x:Bind ViewModel.Site.SiteName, Mode=TwoWay}" Margin="0,16,16,16" HorizontalAlignment="Stretch"
+                         Header="Site Name" PlaceholderText="example.com" IsSpellCheckEnabled="False" InputScope="EmailNameOrAddress" BorderBrush="{x:Bind ViewModel.Site.IsValid, Mode=OneWay, Converter={StaticResource BorderBrushBooleanConverter}}" />
+
+                <TextBox x:Uid="LoginNameTextBox" Text="{x:Bind ViewModel.Site.UserName, Mode=TwoWay}" Margin="0,16,16,16" PlaceholderText="user@example.com" 
+                         InputScope="EmailNameOrAddress">
+                    <TextBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Uid="SiteNameHeaderTextBlock1" Text="Login Name" />
+                            <TextBlock x:Uid="SiteNameHeaderTextBlock2" Text="(optional)" Margin="8,0,0,0" Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" />
+                        </StackPanel>
+                    </TextBox.Header>
+                </TextBox>
+
+                <ComboBox x:Uid="PasswordTypeComboBox" Margin="0,16,0,16" MinWidth="120" MaxWidth="200" ItemsSource="{x:Bind ViewModel.PasswordTypes}" 
+                          Header="Password Type"
                           SelectedItem="{x:Bind ViewModel.Site.PasswordType, Mode=TwoWay, Converter={StaticResource ComboboxItemPasswordTypeConverter}}">
                 </ComboBox>
 
-                <TextBlock Text="Site Counter" Margin="0,16,0,16" />
+                <TextBlock x:Uid="SiteCounterTextBlock" Text="Site Counter" Margin="0,16,0,16" />
                 <Slider Margin="0,0,16,16" MinWidth="150" 
-                        Value="{x:Bind ViewModel.Site.SiteCounter, Mode=TwoWay, Converter={StaticResource SliderDoubleIntConverter}}" StepFrequency="1" Maximum="100" TickFrequency="1" Minimum="1">
+                        Value="{x:Bind ViewModel.Site.SiteCounter, Mode=TwoWay, Converter={StaticResource SliderDoubleIntConverter}}" 
+                        StepFrequency="1" Maximum="100" TickFrequency="1" Minimum="1">
                     <Slider.Header>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Password version:" Margin="0,0,8,0" Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" />
+                            <TextBlock x:Uid="SiteCounterSliderHeaderTextBlock1" Text="Password version:" Margin="0,0,8,0" Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" />
                             <TextBlock Text="{x:Bind ViewModel.Site.SiteCounter, Mode=OneWay}" />
                         </StackPanel>
                     </Slider.Header>
-                    </Slider>
+                </Slider>
 
                 <HyperlinkButton Content="{x:Bind ViewModel.Site.GeneratedPassword, Mode=OneWay}" 
                                  FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Segoe Mono, Consolas" 
@@ -98,14 +107,15 @@
                                  Tapped="GeneratedPasswordHyperLink_OnTapped"/>
 
             </StackPanel>
-            
+
         </ScrollViewer>
 
         <Button RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True"
-                Margin="16" MinWidth="42" MinHeight="{x:Bind MinWidth}" Tapped="SaveButton_OnTapped">
+                Margin="16" MinWidth="42" MinHeight="{x:Bind MinWidth}" Tapped="SaveButton_OnTapped"
+                IsEnabled="{x:Bind ViewModel.Site.IsValid, Mode=OneWay}">
             <StackPanel Orientation="Horizontal">
                 <SymbolIcon Symbol="Accept" Margin="0,0,4,0" />
-                <TextBlock Text="Save" />
+                <TextBlock x:Uid="SaveButtonTextBlock1" Text="Save" />
             </StackPanel>
         </Button>
 

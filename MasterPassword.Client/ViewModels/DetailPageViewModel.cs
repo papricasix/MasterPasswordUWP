@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Resources;
+using Windows.UI;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 using Template10.Mvvm;
 using Template10.Services.NavigationService;
 using Windows.UI.Xaml.Navigation;
 using Autofac;
+using MasterPassword.Common.Models;
 using MasterPasswordUWP.Algorithm;
 using MasterPasswordUWP.Models;
 using MasterPasswordUWP.Services;
@@ -42,7 +48,7 @@ namespace MasterPasswordUWP.ViewModels
         {
             if (value is SiteType)
             {
-                return new PasswordTypeMapping((SiteType) value).Name;
+                return ((SiteType)value).ToHumanReadableString();
             }
             return value;
         }
@@ -51,7 +57,7 @@ namespace MasterPasswordUWP.ViewModels
         {
             if (value is string)
             {
-                return new PasswordTypeMapping((string) value).Type;
+                return ((string)value).FromHumanReadableString(typeof(SiteType), SiteType.GeneratedMaximum);
             }
             return value;
         }
@@ -69,6 +75,46 @@ namespace MasterPasswordUWP.ViewModels
         }
     }
 
+    public class VisibleWhenFalseConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if ((bool)value)
+            {
+                return Visibility.Collapsed;
+            }
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BorderBrushBooleanConverter : DependencyObject, IValueConverter
+    {
+        public static readonly DependencyProperty TrueBrushProperty = DependencyProperty.Register(nameof(TrueBrush),typeof(Brush),typeof(BorderBrushBooleanConverter), PropertyMetadata.Create(new SolidColorBrush(Colors.White)));
+        public static readonly DependencyProperty FalseBrushProperty = DependencyProperty.Register(nameof(FalseBrush),typeof(Brush),typeof(BorderBrushBooleanConverter), PropertyMetadata.Create(new SolidColorBrush(Colors.Red)));
+
+        public Brush TrueBrush { get { return (Brush) GetValue(TrueBrushProperty); } set { SetValue(TrueBrushProperty, value); } }
+        public Brush FalseBrush { get { return (Brush) GetValue(FalseBrushProperty); } set { SetValue(FalseBrushProperty, value); } }
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if ((bool)value)
+            {
+                return TrueBrush;
+            }
+            return FalseBrush;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class DetailPageViewModel : ViewModelBase, IDetailPageViewModel
     {
         private SettingsService SettingsService { get; } = App.Container.Resolve<SettingsService>();
@@ -83,7 +129,7 @@ namespace MasterPasswordUWP.ViewModels
             {
             }
 
-            PasswordTypes = Enum.GetValues(typeof(SiteType)).Cast<SiteType>().Select(SiteTypeHelper.GetShortName);
+            PasswordTypes = Enum.GetValues(typeof(SiteType)).Cast<SiteType>().Select(e => e.ToHumanReadableString());
 
             PropertyChanged += (sender, args) => UpdateGeneratedPassword(Site);
         }
@@ -96,6 +142,15 @@ namespace MasterPasswordUWP.ViewModels
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
             Site = parameter as Site;
+
+            Site.Validator = model =>
+            {
+                var e = model as Site;
+                if (string.IsNullOrWhiteSpace(e.SiteName))
+                {
+                    e.Properties[nameof(e.SiteName)].Errors.Add("Site name is required");
+                }
+            };
 
             RegisterChangeEventHandlerFor(Site);
             UpdateGeneratedPassword(Site);

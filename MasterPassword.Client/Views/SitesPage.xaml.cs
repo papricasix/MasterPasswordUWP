@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -75,13 +76,13 @@ namespace MasterPasswordUWP.Views
             /*ViewModel.SelectedSite = (sender as Control)?.DataContext as ISite;
             ViewModel.EditItem();*/
             var menu = new PopupMenu();
-            menu.Commands.Add(new UICommand("Edit Site...", cmd =>
+            menu.Commands.Add(new UICommand(ResourceLoader.GetForCurrentView().GetString("ContextMenu_SitesPage_EditSite"), cmd =>
             {
                 ViewModel.SelectedSite = (sender as Control)?.DataContext as ISite;
                 ViewModel.EditItem();
             }));
             menu.Commands.Add(new UICommandSeparator());
-            menu.Commands.Add(new UICommand("Delete Site", cmd =>
+            menu.Commands.Add(new UICommand(ResourceLoader.GetForCurrentView().GetString("ContextMenu_SitesPage_DeleteSite"), cmd =>
             {
                 ViewModel.SelectedSite = (sender as Control)?.DataContext as ISite;
                 ViewModel.DeleteItem();

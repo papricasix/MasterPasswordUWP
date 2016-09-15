@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using MasterPassword.Common.Models;
 
 namespace MasterPasswordUWP.Algorithm
 {
@@ -21,27 +22,41 @@ namespace MasterPasswordUWP.Algorithm
 
     public enum SiteType
     {
+        [LocalizedDisplayName("Enums_SiteType_Max")]
         [SiteType(ShortName = "Max", TypeIndex = 0x0, Templates = new [] { "anoxxxxxxxxxxxxxxxxx", "axxxxxxxxxxxxxxxxxno" })]
         GeneratedMaximum,
 
+        [LocalizedDisplayName("Enums_SiteType_Long")]
         [SiteType(ShortName = "Long", TypeIndex = 0x1, Templates = new[] { "CvcvnoCvcvCvcv", "CvcvCvcvnoCvcv", "CvcvCvcvCvcvno", "CvccnoCvcvCvcv", "CvccCvcvnoCvcv", "CvccCvcvCvcvno", "CvcvnoCvccCvcv", "CvcvCvccnoCvcv", "CvcvCvccCvcvno", "CvcvnoCvcvCvcc", "CvcvCvcvnoCvcc", "CvcvCvcvCvccno", "CvccnoCvccCvcv", "CvccCvccnoCvcv", "CvccCvccCvcvno", "CvcvnoCvccCvcc", "CvcvCvccnoCvcc", "CvcvCvccCvccno", "CvccnoCvcvCvcc", "CvccCvcvnoCvcc", "CvccCvcvCvccno" })]
         GeneratedLong,
+        
 
+        [LocalizedDisplayName("Enums_SiteType_Medium")]
         [SiteType(ShortName = "Medium", TypeIndex = 0x2, Templates = new[] { "CvcnoCvc", "CvcCvcno" })]
         GeneratedMedium,
+        
 
+        [LocalizedDisplayName("Enums_SiteType_Basic")]
         [SiteType(ShortName = "Basic", TypeIndex = 0x3, Templates = new[] { "aaanaaan", "aannaaan", "aaannaaa" })]
         GeneratedBasic,
+        
 
+        [LocalizedDisplayName("Enums_SiteType_Short")]
         [SiteType(ShortName = "Short", TypeIndex = 0x4, Templates = new[] { "Cvcn" })]
         GeneratedShort,
+        
 
+        [LocalizedDisplayName("Enums_SiteType_PIN")]
         [SiteType(ShortName = "PIN", TypeIndex = 0x5, Templates = new[] { "nnnn" })]
         GeneratedPin,
+        
 
+        [LocalizedDisplayName("Enums_SiteType_Name")]
         [SiteType(ShortName = "Name", TypeIndex = 0xE, Templates = new[] { "cvccvcvcv" })]
         GeneratedName,
+        
 
+        [LocalizedDisplayName("Enums_SiteType_Phrase")]
         [SiteType(ShortName = "Phrase", TypeIndex = 0xF, Templates = new[] { "cvcc cvc cvccvcv cvc", "cvc cvccvcvcv cvcv", "cv cvccv cvc cvcvccv" })]
         GeneratedPhrase,
 

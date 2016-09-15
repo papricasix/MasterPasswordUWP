@@ -31,7 +31,7 @@
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48"
                                 Symbol="ContactInfo" />
-                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
+                    <TextBlock x:Uid="HamburgerButtonTextBoxLogin" Margin="12,0,0,0" VerticalAlignment="Center"
                                Text="Login" />
                 </StackPanel>
             </Controls:HamburgerButtonInfo>
@@ -42,7 +42,7 @@
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48"
                                 Symbol="Bookmarks" />
-                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
+                    <TextBlock x:Uid="HamburgerButtonTextBlockSites" Margin="12,0,0,0" VerticalAlignment="Center"
                                Text="Sites" />
                 </StackPanel>
             </Controls:HamburgerButtonInfo>
@@ -53,7 +53,7 @@
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48"
                                 Symbol="Upload" />
-                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
+                    <TextBlock x:Uid="HamburgerButtonTextBlockImport" Margin="12,0,0,0" VerticalAlignment="Center"
                                Text="Import" />
                 </StackPanel>
             </Controls:HamburgerButtonInfo>
@@ -64,7 +64,7 @@
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48"
                                 Symbol="Download" />
-                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
+                    <TextBlock x:Uid="HamburgerButtonTextBlockExport" Margin="12,0,0,0" VerticalAlignment="Center"
                                Text="Export" />
                 </StackPanel>
             </Controls:HamburgerButtonInfo>
@@ -92,7 +92,7 @@
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48"
                                 Symbol="Setting" />
-                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
+                    <TextBlock x:Uid="HamburgerButtonTextBoxSettings" Margin="12,0,0,0" VerticalAlignment="Center"
                                Text="Settings" />
                 </StackPanel>
             </Controls:HamburgerButtonInfo>

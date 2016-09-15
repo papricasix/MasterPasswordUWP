@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.Resources;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
@@ -35,7 +36,7 @@ namespace MasterPasswordUWP.Services
             package.SetText((site as Site)?.GeneratedPassword ?? string.Empty);
             Clipboard.SetContent(package);
 
-            ShowToast($"{site.SiteName}", "Password has been copied to clipboard");
+            ShowToast($"{site.SiteName}", ResourceLoader.GetForCurrentView().GetString("Toast_Message_PasswordHasBeenCopied"));
         }
     }
 }

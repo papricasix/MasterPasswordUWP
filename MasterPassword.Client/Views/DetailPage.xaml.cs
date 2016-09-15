@@ -1,3 +1,4 @@
+using Windows.UI.Xaml;
 using MasterPasswordUWP.ViewModels;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Controls;
@@ -14,11 +15,17 @@ namespace MasterPasswordUWP.Views
         {
             InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Disabled;
+
+            Loaded += (sender, args) => SiteNameTextBox.Focus(FocusState.Keyboard);
+            //InputScopeNameValue.EmailNameOrAddress
         }
 
         private void SaveButton_OnTapped(object sender, TappedRoutedEventArgs e)
         {
-            ViewModel.ApplyViewToModel();
+            if (ViewModel.Site.IsValid)
+            {
+                ViewModel.ApplyViewToModel();
+            }
         }
 
         private void GeneratedPasswordHyperLink_OnTapped(object sender, TappedRoutedEventArgs e)

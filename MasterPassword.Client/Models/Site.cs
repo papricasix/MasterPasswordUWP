@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MasterPasswordUWP.Algorithm;
 using Newtonsoft.Json;
 using Template10.Mvvm;
+using Template10.Validation;
 
 namespace MasterPasswordUWP.Models
 {
@@ -30,7 +31,7 @@ namespace MasterPasswordUWP.Models
         void MergeWith(ISite other);
     }
 
-    public class Site : BindableBase, ISite
+    public class Site : /*BindableBase,*/ValidatableModelBase, ISite
     {
         public Site()
         {
@@ -47,36 +48,27 @@ namespace MasterPasswordUWP.Models
             return (obj as Site)?.Identifier == Identifier;
         }
 
-        private KeyVersion _algorithmVersion;
         [JsonRequired]
-        public KeyVersion AlgorithmVersion { get { return _algorithmVersion; } set { Set(ref _algorithmVersion, value); } }
+        public KeyVersion AlgorithmVersion { get { return Read<KeyVersion>(); } set { Write(value); } }
 
-        private string _category;
-        public string Category { get { return _category; } set { Set(ref _category, value); } }
+        public string Category { get { return Read<string>(); } set { Write(value); } }
 
-        private string _generatedUserName;
-        public string GeneratedUserName { get { return _generatedUserName; } set { Set(ref _generatedUserName, value); } }
+        public string GeneratedUserName { get { return Read<string>(); } set { Write(value); } }
 
-        private long _lastUsed;
-        public long LastUsed { get { return _lastUsed; } set { Set(ref _lastUsed, value); } }
+        public long LastUsed { get { return Read<long>(); } set { Write(value); } }
 
-        private SiteType _passwordType;
         [JsonRequired]
-        public SiteType PasswordType { get { return _passwordType; } set { Set(ref _passwordType, value); } }
+        public SiteType PasswordType { get { return Read<SiteType>(); } set { Write(value); } }
 
-        private SiteVariant _passwordVariant;
-        public SiteVariant PasswordVariant { get { return _passwordVariant; } set { Set(ref _passwordVariant, value); } }
+        public SiteVariant PasswordVariant { get { return Read<SiteVariant>(); } set { Write(value); } }
 
-        private int _siteCounter;
         [JsonRequired]
-        public int SiteCounter { get { return _siteCounter; } set { Set(ref _siteCounter, value); } }
+        public int SiteCounter { get { return Read<int>(); } set { Write(value); } }
 
-        private string _siteName;
         [JsonRequired]
-        public string SiteName { get { return _siteName; } set { Set(ref _siteName, value); } }
+        public string SiteName { get { return Read<string>(); } set { Write(value); } }
 
-        private string _userName;
-        public string UserName { get { return _userName; } set { Set(ref _userName, value); } }
+        public string UserName { get { return Read<string>(); } set { Write(value); } }
 
         [JsonIgnore]
         public string GeneratedPassword { get; set; }
@@ -87,8 +79,10 @@ namespace MasterPasswordUWP.Models
         {
             foreach (var e in GetType().GetProperties())
             {
-                e.SetValue(this, e.GetValue(other));
-                //RaisePropertyChanged(e.Name);
+                if (e.CanWrite && e.CanRead)
+                {
+                    e.SetValue(this, e.GetValue(other));
+                }
             }
         }
     }

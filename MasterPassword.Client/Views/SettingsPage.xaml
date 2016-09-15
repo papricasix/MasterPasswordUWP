@@ -47,7 +47,7 @@
         </VisualStateManager.VisualStateGroups>
 
         <!--  header  -->
-        <controls:PageHeader x:Name="pageHeader" Content="Settings Page"
+        <controls:PageHeader x:Uid="SettingsPageHeader" x:Name="pageHeader" Content="Settings Page"
                              Frame="{x:Bind Frame}"
                              RelativePanel.AlignLeftWithPanel="True"
                              RelativePanel.AlignRightWithPanel="True"
@@ -61,7 +61,7 @@
                RelativePanel.Below="pageHeader">
 
             <!--  settings  -->
-            <PivotItem DataContext="{Binding SettingsPartViewModel}" Header="Settings">
+            <PivotItem x:Uid="PivotSetting" DataContext="{Binding SettingsPartViewModel}" Header="Settings">
                 <ScrollViewer Margin="0,12,-12,0" HorizontalContentAlignment="Left"
                               VerticalScrollBarVisibility="Auto">
                     <RelativePanel HorizontalAlignment="Left">
@@ -74,7 +74,7 @@
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True" />-->
 
-                        <ToggleSwitch x:Name="UseLightThemeToggleSwitch" Header="Use Light Theme"
+                        <ToggleSwitch x:Uid="ToggleSwitchTheme" x:Name="UseLightThemeToggleSwitch" Header="Use Light Theme"
                                       IsOn="{Binding UseLightThemeButton, Mode=TwoWay}"
                                       OffContent="Dark theme" OnContent="Light theme"
                                       RelativePanel.AlignLeftWithPanel="True"
@@ -137,7 +137,7 @@
             </PivotItem>-->
 
             <!--  about  -->
-            <PivotItem Header="About">
+            <PivotItem x:Uid="PivotAbout" Header="About">
                 <RelativePanel DataContext="{Binding AboutPartViewModel}">
 
                     <Border x:Name="LogoImage" HorizontalAlignment="Right"
