@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.System;
@@ -12,6 +11,7 @@ using Autofac;
 using MasterPasswordUWP.Algorithm;
 using MasterPasswordUWP.Models;
 using MasterPasswordUWP.Services.SettingsServices;
+using MasterPasswordUWP.ViewModels;
 using Microsoft.Xaml.Interactivity;
 using Template10.Behaviors;
 using Template10.Common;
@@ -68,7 +68,7 @@ namespace MasterPasswordUWP.Views
                 Views.Busy.SetBusy(false);
 
                 Shell.Instance.SetMenuState(HamburgerMenuState.LoggedIn);
-                Shell.Instance.NavigationService.Navigate(typeof(Views.SitesPage));
+                Shell.Instance.NavigationService.Navigate(typeof(Views.SitesPage), new SitesPageViewModelParameter {ParameterType = SitesPageViewModelParameterType.RefreshView});
                 return;
             }
             Shell.Instance.SetMenuState(HamburgerMenuState.Default);

@@ -79,37 +79,14 @@ namespace MasterPasswordUWP.Views
             }
         }
 
-        private static async Task<ContentDialogResult> DisplayImportWarnDialog()
-        {
-            var rl = ResourceLoader.GetForCurrentView();
-            var dialog = new ContentDialog
-            {
-                Title = rl.GetString("Messages_ImportSites_Title"),
-                Content = rl.GetString("Messages_ImportSites_Content"),
-                PrimaryButtonText = rl.GetString("Messages_ImportSites_PrimaryButtonText"),
-                PrimaryButtonCommandParameter = true,
-                SecondaryButtonText = rl.GetString("Messages_ImportSites_SecondaryButtonText"),
-                SecondaryButtonCommandParameter = false,
-            };
-
-            return await dialog.ShowAsync();
-        }
-
         private async void ImportButton_OnTapped(object sender, RoutedEventArgs e)
         {
             ImportButton.IsChecked = false;
 
-            if ((App.Container.Resolve<ISiteProvider>()?.Sites.Any() ?? false) && await DisplayImportWarnDialog() == ContentDialogResult.Primary)
+            if (await App.Container.Resolve<ISiteImportService>().ImportSitesFromUserInputSource(true))
             {
-                return;
+                NavigationService.Navigate(typeof(Views.SitesPage), new SitesPageViewModelParameter {ParameterType = SitesPageViewModelParameterType.RefreshView});
             }
-
-            var picker = new FileOpenPicker { FileTypeFilter = { ".json" }, ViewMode = PickerViewMode.List, SuggestedStartLocation = PickerLocationId.DocumentsLibrary };
-            var file = await picker.PickSingleFileAsync();
-            //await Task.Run(() => App.Container.Resolve<ISiteImporterExporter>().Import(file));
-            await App.Container.Resolve<ISiteImporterExporter>().Import(file);
-
-            NavigationService.Navigate(typeof(Views.SitesPage), new SitesPageViewModelParameter { ParameterType = SitesPageViewModelParameterType.RefreshView });
         }
 
         private async void ExportButton_OnTappedButton_OnTapped(object sender, RoutedEventArgs e)

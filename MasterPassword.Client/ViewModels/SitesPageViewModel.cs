@@ -229,6 +229,14 @@ namespace MasterPasswordUWP.ViewModels
 
         public void EditItem() => NavigationService.Navigate(typeof(Views.DetailPage), SelectedSite);
 
+        public async void RefreshSites()
+        {
+            await ApplyModelToViewModel();
+            FilteredSites.RefreshView();
+            NavigationService.GoBack();
+            NavigationService.GoForward();
+        }
+
         public void DeleteItem()
         {
             foreach (var e in Sites.Where(site => site.Identifier == SelectedSite?.Identifier).ToList())

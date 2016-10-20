@@ -9,6 +9,7 @@
       xmlns:local="using:MasterPasswordUWP.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:models="using:MasterPasswordUWP.Models"
+      xmlns:xcontrols="using:AppStudio.Uwp.Controls"
       xmlns:vm="using:MasterPasswordUWP.ViewModels" mc:Ignorable="d">
 
     <Page.DataContext>
@@ -25,6 +26,45 @@
         </Style>
         <vm:ComboboxItemSitesOrderConverter x:Key="ComboboxItemSitesOrderConverter" />
         <!--<CollectionViewSource x:Name="SitesCollection" Source="{x:Bind ViewModel.Sites}" />-->
+
+        <DataTemplate x:Key="SitesItemsTemplate" x:DataType="models:Site">
+
+            <Grid Margin="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Rectangle Grid.Column="0" Fill="{ThemeResource SystemControlHighlightAltListAccentHighBrush}" />
+
+                <StackPanel Grid.Column="1" Orientation="Vertical" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                            Padding="10" MinHeight="100" 
+                            Tapped="SitesItem_OnTapped" RightTapped="SiteElementEdit_OnRightTapped"
+                            RelativePanel.RightOf="LeftBorder" HorizontalAlignment="Stretch">
+
+                    <RelativePanel HorizontalAlignment="Stretch">
+                        <TextBlock Text="{x:Bind SiteName, Mode=OneWay}" Style="{ThemeResource SubheaderTextBlockStyle}"
+                                    Margin="0,0,0,5" MaxLines="1"
+                                    RelativePanel.AlignLeftWithPanel="True"
+                                    RelativePanel.AlignVerticalCenterWithPanel="True"/>
+                        <Button RelativePanel.AlignRightWithPanel="True" 
+                                RelativePanel.AlignVerticalCenterWithPanel="True"
+                                Background="Transparent" MaxWidth="48" MaxHeight="48"
+                                Tapped="SiteElementEdit_OnTapped" x:Name="EditButton">
+                            <SymbolIcon Symbol="Setting" />
+                        </Button>
+                    </RelativePanel>
+                    <TextBlock Text="{x:Bind UserName, Mode=OneWay}" FontWeight="ExtraLight"/>
+                    <TextBlock Text="{x:Bind GeneratedPassword, Mode=OneWay}" FontSize="18" FontWeight="Bold" 
+                                TextAlignment="Center" FontFamily="Segoe Mono, Consolas" Margin="0,10,0,0"
+                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                </StackPanel>
+            </Grid>
+
+        </DataTemplate>
     </Page.Resources>
 
 
@@ -38,6 +78,9 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <!--  TODO: change properties for narrow view  -->
+
+                        <!--<Setter Target=""></Setter>-->
+
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="VisualStateNormal">
@@ -83,71 +126,48 @@
             </ComboBox>
         </RelativePanel>
 
-        <HyperlinkButton x:Uid="AddNewSiteHyperlinkButton" RelativePanel.Below="SearchBox" Margin="24" Tapped="AddNewSite_OnTapped"
-                         Visibility="{x:Bind ViewModel.AddNewSiteLinkVisibility, Mode=OneWay}">
+        <HyperlinkButton x:Uid="AddNewSiteHyperlinkButton" RelativePanel.Below="SearchBox" Margin="24,32,8,0" Tapped="AddNewSite_OnTapped"
+                         x:Name="AddNewSiteHyperlinkButton" Visibility="{x:Bind ViewModel.AddNewSiteLinkVisibility, Mode=OneWay}">
             Add new Site...
         </HyperlinkButton>
 
-        <ScrollViewer Margin="0" HorizontalContentAlignment="Left"
+        <HyperlinkButton x:Uid="ImportSitesHyperlinkButton" RelativePanel.Below="AddNewSiteHyperlinkButton" Margin="24,8,0,0" Tapped="ImportSites_OnTapped"
+                         x:Name="ImportSitesHyperlinkButton" Visibility="{x:Bind ViewModel.AddNewSiteLinkVisibility, Mode=OneWay}">
+            Import Sites from JSON...
+        </HyperlinkButton>
+
+        <ScrollViewer Margin="0" HorizontalContentAlignment="Stretch"
                       VerticalScrollBarVisibility="Auto"
                       RelativePanel.Below="SortingPanel"
                       RelativePanel.AlignRightWithPanel="True"
                       RelativePanel.AlignLeftWithPanel="True"
                       Visibility="{x:Bind ViewModel.SitesScrollViewerVisibility, Mode=OneWay}">
             
-            <RelativePanel HorizontalAlignment="Left">
+            <RelativePanel>
 
                 <!--  show items  -->
-                <GridView x:Name="ItemsGridView" ItemsSource="{x:Bind ViewModel.FilteredSites, Mode=OneWay}"
-                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                          Margin="16,0,0,0" ItemContainerStyle="{StaticResource MyGridViewItemStyle}">
-
-                    <GridView.ItemTemplate>
-                        
-                        <DataTemplate x:DataType="models:Site">
-
-                            <RelativePanel>
-                                <Border BorderThickness="8,0,0,0" BorderBrush="{ThemeResource SystemControlHighlightAltListAccentHighBrush}"
-                                    RelativePanel.AlignLeftWithPanel="True"
-                                    RelativePanel.AlignTopWithPanel="True"
-                                    RelativePanel.AlignBottomWithPanel="True"
-                                    x:Name="LeftBorder"/>
-                            <StackPanel Orientation="Vertical" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                                        Padding="10" MinWidth="310" MinHeight="100" Width="350" 
-                                        Tapped="SitesItem_OnTapped" RightTapped="SiteElementEdit_OnRightTapped"
-                                        RelativePanel.RightOf="LeftBorder">
-
-                                <RelativePanel HorizontalAlignment="Stretch">
-                                    <TextBlock Text="{x:Bind SiteName, Mode=OneWay}" Style="{ThemeResource SubheaderTextBlockStyle}"
-                                               Margin="0,0,0,5" MaxLines="1"
-                                               RelativePanel.AlignLeftWithPanel="True"
-                                               RelativePanel.AlignVerticalCenterWithPanel="True"/>
-                                    <Button RelativePanel.AlignRightWithPanel="True" 
-                                            RelativePanel.AlignVerticalCenterWithPanel="True"
-                                            Background="Transparent" MaxWidth="48" MaxHeight="48"
-                                            Tapped="SiteElementEdit_OnTapped" x:Name="EditButton">
-                                        <SymbolIcon Symbol="Setting" />
-                                    </Button>
-                                </RelativePanel>
-                                <TextBlock Text="{x:Bind UserName, Mode=OneWay}" FontWeight="ExtraLight"/>
-                                <TextBlock Text="{x:Bind GeneratedPassword, Mode=OneWay}" FontSize="18" FontWeight="Bold" 
-                                           TextAlignment="Center" FontFamily="Segoe Mono, Consolas" Margin="0,10,0,0"
-                                           Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                            </StackPanel>
-                            </RelativePanel>
-
-                        </DataTemplate>
-                        
-                    </GridView.ItemTemplate>
+                <xcontrols:ResponsiveGridView x:Name="ItemsGridView" ItemsSource="{x:Bind ViewModel.FilteredSites, Mode=OneWay}"
+                          RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                          RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True"
+                          Margin="16" ItemHeight="130" Padding="8" VerticalAlignment="Stretch"
+                          ItemTemplate="{StaticResource SitesItemsTemplate}" DesiredWidth="350">
                     
-                </GridView>
+                </xcontrols:ResponsiveGridView>
+                <!--<GridView x:Name="ItemsGridView" ItemsSource="{x:Bind ViewModel.FilteredSites, Mode=OneWay}"
+                          RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                          RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True"
+                          Margin="0,0,0,0" ItemContainerStyle="{StaticResource MyGridViewItemStyle}"
+                          ItemTemplate="{StaticResource SitesItemsTemplate}">
+                </GridView>-->
 
             </RelativePanel>
 
         </ScrollViewer>
 
         <Button RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True"
-                Margin="16" MinWidth="42" MinHeight="{x:Bind MinWidth}" Tapped="AddNewSite_OnTapped">
+                Margin="24" MinWidth="42" MinHeight="24" Tapped="AddNewSite_OnTapped"
+                Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}">
             <StackPanel Orientation="Horizontal">
                 <SymbolIcon Symbol="Add" Margin="0,0,4,0" />
                 <TextBlock x:Uid="AddNewSiteButtonTextBlock1" Text="Add new Site" />

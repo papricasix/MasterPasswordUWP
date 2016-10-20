@@ -132,5 +132,13 @@ namespace MasterPasswordUWP.Views
             ViewModel.SelectedSite = ViewModel.CreateEmptySite();
             ViewModel.EditItem();
         }
+
+        private async void ImportSites_OnTapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (await App.Container.Resolve<ISiteImportService>().ImportSitesFromUserInputSource(true))
+            {
+                ViewModel.RefreshSites();
+            }
+        }
     }
 }

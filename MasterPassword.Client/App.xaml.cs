@@ -16,6 +16,7 @@ using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.Storage.Pickers;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -46,6 +47,7 @@ namespace MasterPasswordUWP
             bldr.RegisterType<SitePersistor>().As<ISitePersistor>().As<ISiteImporterExporter>();
             bldr.RegisterType<SiteDataSourceJson>().As<ISiteDataSource>();
             bldr.RegisterType<PasswordClipboardService>().As<IPasswordClipboardService>();
+            bldr.RegisterType<SiteImportService>().As<ISiteImportService>();
             //bldr.RegisterType<SettingsService>().SingleInstance();
             // register all ViewModels
             //bldr.RegisterType<SitesPageViewModel>().As<ISitesPageViewModel>().PropertiesAutowired();
@@ -56,12 +58,6 @@ namespace MasterPasswordUWP
         {
             InitializeComponent();
             SplashFactory = e => new Views.Splash(e);
-
-            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0))
-            {
-                //var statusBar = StatusBar
-                throw new NullReferenceException("statusbar found!");
-            }
 
             // Xbox one stuff
             //ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
@@ -102,6 +98,17 @@ namespace MasterPasswordUWP
                 // Xbox one stuff
                 //TODO: check if we are on xbox
                 //ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
+            }
+
+            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0))
+            {
+                // on phones: setting the status bar to the same color as the pages header...
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    statusBar.BackgroundColor = (Color)Resources["SystemAccentColor"];
+                    statusBar.BackgroundOpacity = 1.0f;
+                }
             }
 
             await Task.CompletedTask;

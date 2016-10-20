@@ -10,5 +10,5 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
-
+    
 </common:BootStrapper>
