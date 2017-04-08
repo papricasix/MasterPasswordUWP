@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Template10.Mvvm;
@@ -34,6 +35,30 @@ namespace MasterPasswordUWP.ViewModels
         {
             get { return _settings.AppTheme.Equals(ApplicationTheme.Light); }
             set { _settings.AppTheme = value ? ApplicationTheme.Light : ApplicationTheme.Dark; base.RaisePropertyChanged(); }
+        }
+
+        public bool PasswordsAreVisibleButton
+        {
+            get { return _settings.PasswordsVisible; }
+            set { _settings.PasswordsVisible = value; }
+        }
+
+        public string ApplicationLanguage
+        {
+            get { return _settings.AppLanguage; }
+            set { _settings.AppLanguage = value; }
+        }
+
+        public IEnumerable<string> ApplicationLanguages
+        {
+            get
+            {
+                yield return " ";
+                foreach (var e in Windows.Globalization.ApplicationLanguages.ManifestLanguages)
+                {
+                    yield return e;
+                }
+            }
         }
     }
 

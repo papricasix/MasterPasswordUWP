@@ -8,12 +8,18 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using MasterPasswordUWP.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace MasterPasswordUWP.Services.DataSources
 {
     public class SiteDataSourceJson : ISiteDataSource
     {
-        public SiteDataSourceJson() { }
+        public DataSourceType DataSourceType { get; set; }
+
+        public SiteDataSourceJson(DataSourceType dataSourceType)
+        {
+            DataSourceType = dataSourceType;
+        }
 
         public object CreateNew()
         {
@@ -35,7 +41,7 @@ namespace MasterPasswordUWP.Services.DataSources
 
         public async Task<bool> Serialize(IEnumerable<ISite> sites, object target)
         {
-            var content = JsonConvert.SerializeObject(sites);
+            var content = JsonConvert.SerializeObject(sites, new JsonSerializerSettings { Formatting = Formatting.Indented, ContractResolver = new CamelCasePropertyNamesContractResolver()});
             if (target is string)
             {
                 target = await StorageFile.GetFileFromPathAsync(target as string);

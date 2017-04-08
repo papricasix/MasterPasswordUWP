@@ -59,8 +59,7 @@
             </Controls:HamburgerButtonInfo>
 
             <!--  Export button  -->
-            <Controls:HamburgerButtonInfo ClearHistory="False" Tapped="ExportButton_OnTappedButton_OnTapped" Visibility="Collapsed"
-                                          x:Name="ExportButton" PageParameter="">
+            <Controls:HamburgerButtonInfo ClearHistory="False" Tapped="ExportButton_OnTappedButton_OnTapped" Visibility="Collapsed" x:Name="ExportButton" PageParameter="">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48"
                                 Symbol="Download" />
@@ -70,19 +69,33 @@
             </Controls:HamburgerButtonInfo>
 
             <!--  Logout button  -->
-            <!--<Controls:HamburgerButtonInfo ClearHistory="False" Visibility="Collapsed" 
-                                          x:Name="LogoutButton" PageParameter="">
+            <Controls:HamburgerButtonInfo ClearHistory="False" Visibility="Collapsed" x:Name="LogoutButton" 
+                                          PageParameter="" Tapped="LogoutButton_OnTapped">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48"
                                 Symbol="Back" />
-                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
+                    <TextBlock x:Uid="HamburgerButtonTextBoxLogout" Margin="12,0,0,0" VerticalAlignment="Center"
                                Text="Logout" />
                 </StackPanel>
-            </Controls:HamburgerButtonInfo>-->
+            </Controls:HamburgerButtonInfo>
 
         </Controls:HamburgerMenu.PrimaryButtons>
 
         <Controls:HamburgerMenu.SecondaryButtons>
+
+            <!--  feedback button  -->
+            <Controls:HamburgerButtonInfo x:Name="FeedbackButton" PageParameter="" Visibility="{x:Bind FeedbackAvailability}" Tapped="FeedbackButton_OnTapped">
+                <Controls:HamburgerButtonInfo.NavigationTransitionInfo>
+                    <SuppressNavigationTransitionInfo />
+                </Controls:HamburgerButtonInfo.NavigationTransitionInfo>
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Width="48" Height="48"
+                                Symbol="Comment" />
+                    <TextBlock x:Uid="HamburgerButtonTextBoxFeedback" Margin="12,0,0,0" VerticalAlignment="Center"
+                               Text="Settings" />
+                </StackPanel>
+            </Controls:HamburgerButtonInfo>
+
             <!--  settingspage button  -->
             <Controls:HamburgerButtonInfo x:Name="SettingsButton" PageParameter="0"
                                           PageType="views:SettingsPage">
@@ -96,6 +109,7 @@
                                Text="Settings" />
                 </StackPanel>
             </Controls:HamburgerButtonInfo>
+            
         </Controls:HamburgerMenu.SecondaryButtons>
 
     </Controls:HamburgerMenu>

@@ -58,7 +58,7 @@
                         </Button>
                     </RelativePanel>
                     <TextBlock Text="{x:Bind UserName, Mode=OneWay}" FontWeight="ExtraLight"/>
-                    <TextBlock Text="{x:Bind GeneratedPassword, Mode=OneWay}" FontSize="18" FontWeight="Bold" 
+                    <TextBlock Text="{x:Bind DisplayablePassword, Mode=OneWay}" FontSize="18" FontWeight="Bold" 
                                 TextAlignment="Center" FontFamily="Segoe Mono, Consolas" Margin="0,10,0,0"
                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                 </StackPanel>

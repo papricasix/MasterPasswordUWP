@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MasterPasswordUWP.Algorithm;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Template10.Mvvm;
 using Template10.Validation;
 
@@ -21,6 +22,8 @@ namespace MasterPasswordUWP.Models
         string SiteName { get; set; }
 
         string UserName { get; set; }
+
+        string Description { get; set; }
 
         int SiteCounter { get; set; }
 
@@ -49,17 +52,20 @@ namespace MasterPasswordUWP.Models
         }
 
         [JsonRequired]
+        [JsonConverter(typeof(StringEnumConverter))]
         public KeyVersion AlgorithmVersion { get { return Read<KeyVersion>(); } set { Write(value); } }
 
         public string Category { get { return Read<string>(); } set { Write(value); } }
 
-        public string GeneratedUserName { get { return Read<string>(); } set { Write(value); } }
+        public bool GeneratedUserName { get { return Read<bool>(); } set { Write(value); } }
 
         public long LastUsed { get { return Read<long>(); } set { Write(value); } }
 
         [JsonRequired]
+        [JsonConverter(typeof(StringEnumConverter))]
         public SiteType PasswordType { get { return Read<SiteType>(); } set { Write(value); } }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public SiteVariant PasswordVariant { get { return Read<SiteVariant>(); } set { Write(value); } }
 
         [JsonRequired]
@@ -70,8 +76,13 @@ namespace MasterPasswordUWP.Models
 
         public string UserName { get { return Read<string>(); } set { Write(value); } }
 
+        public string Description { get { return Read<string>(); } set { Write(value); } }
+
         [JsonIgnore]
-        public string GeneratedPassword { get; set; }
+        public string GeneratedPassword { get; private set; }
+
+        [JsonIgnore]
+        public string DisplayablePassword { get; set; }
 
         public string Identifier { get; set; }
 
@@ -84,6 +95,12 @@ namespace MasterPasswordUWP.Models
                     e.SetValue(this, e.GetValue(other));
                 }
             }
+        }
+
+        public void SetGeneratedPassword(string generatedPassword, bool bPassHidden)
+        {
+            GeneratedPassword = generatedPassword;
+            DisplayablePassword = bPassHidden ? "**********" : generatedPassword;
         }
     }
 }

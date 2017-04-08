@@ -24,9 +24,24 @@ namespace MasterPasswordUWP.Services
 
     public interface ISiteImporterExporter
     {
-        Task Import(StorageFile file);
+        Task Import(DataSourceType type, StorageFile file);
 
-        Task Export(StorageFile file);
+        Task Export(DataSourceType type, StorageFile file);
+    }
+
+    static class ProviderHelper
+    {
+        public static ISiteDataSource GetDataSourceFor(IEnumerable<ISiteDataSource> sources, DataSourceType type)
+        {
+            foreach ( var e in sources )
+            {
+                if ( e.DataSourceType == type )
+                {
+                    return e;
+                }
+            }
+            throw new NullReferenceException( $"{nameof(sources)} is missing for {nameof(type)} == {type}" );
+        }
     }
 
     /// <summary>
@@ -34,7 +49,7 @@ namespace MasterPasswordUWP.Services
     /// </summary>
     public class SiteProvider : ISiteProvider
     {
-        private readonly ISiteDataSource _dataSource;
+        private readonly IEnumerable<ISiteDataSource> _dataSources;
         private readonly SettingsService _settings;
 
         private IEnumerable<ISite> _sitesCache;
@@ -45,9 +60,9 @@ namespace MasterPasswordUWP.Services
             set { _sitesCache = value;  }
         }
 
-        public SiteProvider(ISiteDataSource dataSource, SettingsService settings)
+        public SiteProvider(IEnumerable<ISiteDataSource> dataSources, SettingsService settings)
         {
-            _dataSource = dataSource;
+            _dataSources = dataSources;
             _settings = settings;
         }
 
@@ -58,11 +73,13 @@ namespace MasterPasswordUWP.Services
 
         private IEnumerable<ISite> Read()
         {
-            if ( !File.Exists( _settings.DataSourceFile ) )
+            // default type is Json right now. no need to pass this parameter to any consumer
+            var dataSource = ProviderHelper.GetDataSourceFor(_dataSources, DataSourceType.Json);
+            if ( !File.Exists(_settings.DataSourceFile) )
             {
-                File.WriteAllText( _settings.DataSourceFile, _dataSource.CreateNew() as string );
+                File.WriteAllText( _settings.DataSourceFile, dataSource.CreateNew() as string );
             }
-            return _dataSource.DeserializeFrom( File.ReadAllText( _settings.DataSourceFile ) );
+            return dataSource.DeserializeFrom( File.ReadAllText( _settings.DataSourceFile ) );
         }
     }
 
@@ -72,17 +89,17 @@ namespace MasterPasswordUWP.Services
     public class SitePersistor : ISitePersistor, ISiteImporterExporter
     {
         private readonly ISiteProvider _siteProvider;
-        private readonly ISiteDataSource _dataSource;
+        private readonly IEnumerable<ISiteDataSource> _dataSources;
         private readonly SettingsService _settings;
 
-        public SitePersistor(ISiteDataSource dataSource, ISiteProvider siteProvider, SettingsService settings)
+        public SitePersistor(IEnumerable<ISiteDataSource> dataSources, ISiteProvider siteProvider, SettingsService settings)
         {
             _siteProvider = siteProvider;
-            _dataSource = dataSource;
+            _dataSources = dataSources;
             _settings = settings;
         }
 
-        public async Task Import(StorageFile file)
+        public async Task Import(DataSourceType type, StorageFile file)
         {
             if (file == null)
             {
@@ -91,25 +108,25 @@ namespace MasterPasswordUWP.Services
             var stream = await file.OpenStreamForReadAsync();
             using (var e = new StreamReader(stream))
             {
-                var sitesToImport = _dataSource.DeserializeFrom(e.ReadToEnd());
-                await _dataSource.Serialize(sitesToImport, _settings.DataSourceFile);
+                var sitesToImport = ProviderHelper.GetDataSourceFor(_dataSources, type).DeserializeFrom(e.ReadToEnd());
+                await ProviderHelper.GetDataSourceFor(_dataSources, DataSourceType.Json).Serialize(sitesToImport, _settings.DataSourceFile);
             }
+
             // clear cache, if applicable
             _siteProvider.Sites = null;
         }
-
-        public async Task Export(StorageFile file)
+        public async Task Export(DataSourceType type, StorageFile file)
         {
             if ( file == null )
             {
                 return;
             }
-            await _dataSource.Serialize( _siteProvider.Sites, file );
+            await ProviderHelper.GetDataSourceFor(_dataSources, type).Serialize(_siteProvider.Sites, file);
         }
 
         public async void Persist(IEnumerable<ISite> sites)
         {
-            await _dataSource.Serialize(sites, _settings.DataSourceFile);
+            await ProviderHelper.GetDataSourceFor(_dataSources, DataSourceType.Json).Serialize(sites, _settings.DataSourceFile);
             // clear cache, if applicable
             _siteProvider.Sites = null;
         }

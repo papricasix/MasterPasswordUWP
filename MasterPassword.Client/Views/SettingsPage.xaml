@@ -74,23 +74,34 @@
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True" />-->
 
-                        <ToggleSwitch x:Uid="ToggleSwitchTheme" x:Name="UseLightThemeToggleSwitch" Header="Use Light Theme"
+                        <ToggleSwitch x:Uid="ToggleSwitchTheme" x:Name="UseLightThemeToggleSwitch" 
+                                      Header="Use Light Theme"
                                       IsOn="{Binding UseLightThemeButton, Mode=TwoWay}"
                                       OffContent="Dark theme" OnContent="Light theme"
                                       RelativePanel.AlignLeftWithPanel="True"
-                                      RelativePanel.AlignTopWithPanel="True" />
+                                      RelativePanel.AlignTopWithPanel="True"/>
 
-                        <!--<TextBox x:Name="BusyTextTextBox" Width="200"
-                                 Margin="0,12,0,0" HorizontalAlignment="Left"
-                                 Header="Busy text" RelativePanel.AlignLeftWithPanel="True"
-                                 RelativePanel.Below="UseLightThemeToggleSwitch"
-                                 Text="{Binding BusyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <ToggleSwitch x:Uid="ToggleSwitchPasswordVisibility" 
+                                      x:Name="DefaultPasswordVisibilityToggleSwitch" 
+                                      Header="Default password visibility"
+                                      IsOn="{Binding PasswordsAreVisibleButton, Mode=TwoWay}"
+                                      OffContent="Hidden" OnContent="Visible"
+                                      RelativePanel.Below="UseLightThemeToggleSwitch" 
+                                      Margin="0,12,0,0"/>
 
-                        <Button Margin="12,0,0,0"
-                                Command="{x:Bind ViewModel.SettingsPartViewModel.ShowBusyCommand}"
-                                Content="Show Busy"
-                                RelativePanel.AlignBottomWith="BusyTextTextBox"
-                                RelativePanel.RightOf="BusyTextTextBox" />-->
+                        <ComboBox x:Uid="ComboboxOverrideLanguage" x:Name="ComboboxOverrideLanguage"
+                                  ItemsSource="{Binding ApplicationLanguages, Mode=OneTime}"
+                                  SelectedItem="{Binding ApplicationLanguage, Mode=TwoWay}"
+                                  SelectionChanged="ComboboxOverrideLanguage_OnSelectionChanged"
+                                  RelativePanel.Below="DefaultPasswordVisibilityToggleSwitch"
+                                  Margin="0,12,0,0">
+                            <ComboBox.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock x:Uid="ComboboxOverrideLanguageTextBlock1" Text="Language" />
+                                    <TextBlock x:Uid="ComboboxOverrideLanguageTextBlock2" Text="(restart will be required)" Margin="8,0,0,0" Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" />
+                                </StackPanel>
+                            </ComboBox.Header>
+                        </ComboBox>
 
                     </RelativePanel>
 
@@ -158,10 +169,14 @@
                                RelativePanel.AlignTopWithPanel="True"
                                Text="{Binding DisplayName}" />
 
-                    <TextBlock x:Name="PublisherTextBlock"
-                               RelativePanel.AlignLeftWithPanel="True"
-                               RelativePanel.Below="DisplayNameTextBlock"
-                               Text="{Binding Publisher}" />
+                    <StackPanel Orientation="Horizontal" x:Name="PublisherTextBlock"
+                                RelativePanel.AlignLeftWithPanel="True" RelativePanel.Below="DisplayNameTextBlock">
+                        <TextBlock Text="{Binding Publisher}" VerticalAlignment="Center" />
+                        <SymbolIcon Symbol="Link" Margin="24,0,0,0" VerticalAlignment="Center" />
+                        <HyperlinkButton Margin="4,0,0,0" VerticalAlignment="Center" Tapped="VisitHomePage_OnTapped">
+                            mdudek.com
+                        </HyperlinkButton>
+                    </StackPanel>
 
                     <TextBlock x:Name="VersionTextBlock"
                                RelativePanel.AlignLeftWithPanel="True"

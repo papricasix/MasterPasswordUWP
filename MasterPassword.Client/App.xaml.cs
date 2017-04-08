@@ -3,24 +3,21 @@ using System.Threading.Tasks;
 using MasterPasswordUWP.Services.SettingsServices;
 using Windows.ApplicationModel.Activation;
 using Template10.Controls;
-using Template10.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Background;
-using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
-using Windows.Storage.Pickers;
-using Windows.System;
+using Windows.Globalization;
+using Windows.System.UserProfile;
 using Windows.UI;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Autofac;
+using MasterPassword.Client.Models.Marshallers;
+using MasterPassword.Client.Services.ImportExport;
+using MasterPassword.Client.Services.Providers;
 using MasterPasswordUWP.Services;
 using MasterPasswordUWP.Services.DataSources;
 using MasterPasswordUWP.ViewModels;
@@ -34,7 +31,7 @@ namespace MasterPasswordUWP
     [Bindable]
     sealed partial class App : Template10.Common.BootStrapper
     {
-        private static Lazy<IContainer> LazyContainer { get; } = new Lazy<IContainer>( BuildContainer );
+        private static Lazy<IContainer> LazyContainer { get; } = new Lazy<IContainer>(BuildContainer);
 
         public static IContainer Container => LazyContainer.Value;
 
@@ -45,9 +42,14 @@ namespace MasterPasswordUWP
             bldr.RegisterInstance(new SettingsService()).ExternallyOwned().SingleInstance();
             bldr.RegisterType<SiteProvider>().As<ISiteProvider>().SingleInstance();
             bldr.RegisterType<SitePersistor>().As<ISitePersistor>().As<ISiteImporterExporter>();
-            bldr.RegisterType<SiteDataSourceJson>().As<ISiteDataSource>();
+            bldr.RegisterType<SiteDataSourceJson>().As<ISiteDataSource>().WithParameter(new TypedParameter(typeof(DataSourceType), DataSourceType.Json));
+            bldr.RegisterType<SiteDataSourceMpSites>().As<ISiteDataSource>().WithParameter(new TypedParameter(typeof(DataSourceType), DataSourceType.MpSites));
+            bldr.RegisterType<DefaultMetadataProvider>().As<IMetadataProvider>();
             bldr.RegisterType<PasswordClipboardService>().As<IPasswordClipboardService>();
-            bldr.RegisterType<SiteImportService>().As<ISiteImportService>();
+            bldr.RegisterType<SiteImportExportService>().As<ISiteImportExportService>();
+            bldr.RegisterType<MpSiteMarshaller>().As<ICustomSiteMarshaller>();
+            bldr.RegisterType<MpSiteUnmarshaller>().As<ICustomSiteUnmarshaller>();
+            bldr.RegisterType<TelemetryService>().As<ITelemetryService>();
             //bldr.RegisterType<SettingsService>().SingleInstance();
             // register all ViewModels
             //bldr.RegisterType<SitesPageViewModel>().As<ISitesPageViewModel>().PropertiesAutowired();
@@ -56,6 +58,15 @@ namespace MasterPasswordUWP
 
         public App()
         {
+            var _settings = App.Container.Resolve<SettingsService>();
+
+            ApplicationLanguages.PrimaryLanguageOverride = GlobalizationPreferences.Languages.FirstOrDefault() ?? "en-US";
+            // apply users language override
+            if (!string.IsNullOrWhiteSpace(_settings.AppLanguage))
+            {
+                ApplicationLanguages.PrimaryLanguageOverride = _settings.AppLanguage;
+            }
+
             InitializeComponent();
             SplashFactory = e => new Views.Splash(e);
 
@@ -69,7 +80,6 @@ namespace MasterPasswordUWP
 
             #region App settings
 
-            var _settings = App.Container.Resolve<SettingsService>();
             RequestedTheme = _settings.AppTheme;
             CacheMaxDuration = _settings.CacheMaxDuration;
 

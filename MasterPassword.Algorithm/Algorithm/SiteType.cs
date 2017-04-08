@@ -18,6 +18,12 @@ namespace MasterPasswordUWP.Algorithm
         public SiteTypeClass TypeClass { get; set; }
         public int TypeIndex { get; set; }
         public object[] TypeFeatures { get; set; }
+
+        /*
+         * there are two features in the original:
+         * ExportContent( 1 << 10 ),
+         * DevicePrivate( 1 << 11 );
+         */
     }
 
     public enum SiteType
@@ -102,11 +108,7 @@ namespace MasterPasswordUWP.Algorithm
         public static int GetType(SiteType e)
         {
             var mask = GetTypeIndex(e) | SiteTypeClassHelper.GetMask(GetTypeClass(e));
-            foreach (var n in Enum.GetValues(typeof(SiteType)))
-            {
-                
-            }
-            throw new NotImplementedException();
+            return mask;
         }
 
         public static IEnumerable<SiteType> ForMask(int mask)
@@ -125,6 +127,18 @@ namespace MasterPasswordUWP.Algorithm
         {
             var t = GetTemplates(e).ToArray();
             return new Template( t.ElementAt(templateIndex % t.Length) );
+        }
+
+        public static SiteType FromInt(int intValue)
+        {
+            foreach (SiteType e in Enum.GetValues(typeof(SiteType)))
+            {
+                if (GetType(e) == intValue)
+                {
+                    return e;
+                }
+            }
+            throw new ArgumentException(nameof(intValue));
         }
     }
 }

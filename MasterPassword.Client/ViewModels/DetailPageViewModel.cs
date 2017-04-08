@@ -136,7 +136,7 @@ namespace MasterPasswordUWP.ViewModels
 
         private void UpdateGeneratedPassword(Site site)
         {
-            site.GeneratedPassword = SettingsService.MasterKey?.Encode( Site.SiteName, Site.PasswordType, (uint) Site.SiteCounter, SiteVariant.Password );
+            site.SetGeneratedPassword( SettingsService.MasterKey?.Encode( Site.SiteName, Site.PasswordType, (uint) Site.SiteCounter, SiteVariant.Password ), !SettingsService.PasswordsVisible );
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)

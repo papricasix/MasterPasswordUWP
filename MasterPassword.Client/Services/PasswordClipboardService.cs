@@ -9,6 +9,7 @@ using Windows.ApplicationModel.Resources;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
+using Autofac;
 using MasterPasswordUWP.Models;
 
 namespace MasterPasswordUWP.Services
@@ -20,6 +21,13 @@ namespace MasterPasswordUWP.Services
 
     internal class PasswordClipboardService : IPasswordClipboardService
     {
+        private readonly ITelemetryService _telemetry;
+
+        public PasswordClipboardService(ITelemetryService telemetry)
+        {
+            _telemetry = telemetry;
+        }
+
         public void ShowToast(string line1, string line2)
         {
             var template = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText03);
@@ -30,13 +38,30 @@ namespace MasterPasswordUWP.Services
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
-        public void CopyPasswordToClipboard(ISite site)
+        private void CopyToClipboard(string value)
         {
             var package = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-            package.SetText((site as Site)?.GeneratedPassword ?? string.Empty);
+            package.SetText(value ?? string.Empty);
             Clipboard.SetContent(package);
+            Clipboard.Flush();
+        }
 
-            ShowToast($"{site.SiteName}", ResourceLoader.GetForCurrentView().GetString("Toast_Message_PasswordHasBeenCopied"));
+        public void CopyPasswordToClipboard(ISite site)
+        {
+            if (site is Site)
+            {
+                try
+                {
+                    //CopyToClipboard((site as Site)?.UserName ?? string.Empty);
+                    CopyToClipboard((site as Site).GeneratedPassword ?? string.Empty);
+
+                    ShowToast($"{site.SiteName}", ResourceLoader.GetForCurrentView().GetString("Toast_Message_PasswordHasBeenCopied"));
+                }
+                catch (Exception x)
+                {
+                    _telemetry?.LogMessage(callerObj: this, message: $"Exception in CopyPasswordToClipboard: {x.ToString()}");
+                }
+            }
         }
     }
 }

@@ -14,6 +14,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Autofac;
+using MasterPassword.Client.Services.ImportExport;
 using MasterPasswordUWP.Services;
 using MasterPasswordUWP.Services.SettingsServices;
 using MasterPasswordUWP.ViewModels;
@@ -45,6 +46,8 @@ namespace MasterPasswordUWP.Views
         public static HamburgerMenu HamburgerMenu => Instance.MyHamburgerMenu;
 
         public INavigationService NavigationService => MyHamburgerMenu.NavigationService;
+
+        public Visibility FeedbackAvailability => Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported() ? Visibility.Visible : Visibility.Collapsed;
 
         public Shell()
         {
@@ -83,7 +86,7 @@ namespace MasterPasswordUWP.Views
         {
             ImportButton.IsChecked = false;
 
-            if (await App.Container.Resolve<ISiteImportService>().ImportSitesFromUserInputSource(true))
+            if (await App.Container.Resolve<ISiteImportExportService>().ImportSitesFromUserInputSource(true, App.Container.Resolve<SettingsService>().PreferredImportExportFileType))
             {
                 NavigationService.Navigate(typeof(Views.SitesPage), new SitesPageViewModelParameter {ParameterType = SitesPageViewModelParameterType.RefreshView});
             }
@@ -93,10 +96,27 @@ namespace MasterPasswordUWP.Views
         {
             ExportButton.IsChecked = false;
 
-            var picker = new FileSavePicker { SuggestedFileName = "mpw-export.json", SuggestedStartLocation = PickerLocationId.DocumentsLibrary };
-            picker.FileTypeChoices.Add("JSON", new List<string> { ".json" });
-            var file = await picker.PickSaveFileAsync();
-            await Task.Run(() => App.Container.Resolve<ISiteImporterExporter>().Export(file));
+            if (await App.Container.Resolve<ISiteImportExportService>().ExportSitesToUserInputTarget(App.Container.Resolve<SettingsService>().PreferredImportExportFileType))
+            {
+                
+            }
+        }
+
+        private async void FeedbackButton_OnTapped(object sender, RoutedEventArgs e)
+        {
+            var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
+            await launcher.LaunchAsync();
+        }
+
+        private void LogoutButton_OnTapped(object sender, RoutedEventArgs e)
+        {
+            SetMenuState(HamburgerMenuState.Default);
+            LoginButton.IsChecked = false;
+
+            NavigationService.Navigate(typeof(Views.LoginPage));
+            NavigationService.ClearCache(true);
+            NavigationService.ClearHistory();
+            App.Container.Resolve<SettingsService>().MasterKey = null;
         }
     }
 }

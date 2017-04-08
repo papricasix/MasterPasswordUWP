@@ -58,6 +58,11 @@ namespace MasterPasswordUWP.Algorithm
             }
             throw new InvalidOperationException($"Unsupported version: {e}");
         }
+
+        public static KeyVersion FromInt(int intValue)
+        {
+            return (KeyVersion)intValue;
+        }
     }
 
     public abstract class MasterKey

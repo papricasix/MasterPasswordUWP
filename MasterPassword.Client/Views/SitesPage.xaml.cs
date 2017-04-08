@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Autofac;
+using MasterPassword.Client.Services.ImportExport;
 using MasterPasswordUWP.Models;
 using MasterPasswordUWP.Services;
 
@@ -135,7 +136,7 @@ namespace MasterPasswordUWP.Views
 
         private async void ImportSites_OnTapped(object sender, TappedRoutedEventArgs e)
         {
-            if (await App.Container.Resolve<ISiteImportService>().ImportSitesFromUserInputSource(true))
+            if (await App.Container.Resolve<ISiteImportExportService>().ImportSitesFromUserInputSource(true))
             {
                 ViewModel.RefreshSites();
             }

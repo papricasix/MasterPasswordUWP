@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -63,10 +64,13 @@ namespace MasterPasswordUWP.ViewModels
         RefreshView
     }
 
-    [Serializable]
+    [DataContract]
     public class SitesPageViewModelParameter
     {
+        [DataMember]
         public SitesPageViewModelParameterType ParameterType { get; set; }
+
+        [DataMember]
         public object Parameter { get; set; }
     }
 
@@ -112,7 +116,7 @@ namespace MasterPasswordUWP.ViewModels
             var provider = App.Container.Resolve<ISiteProvider>();
             var preparedSites = provider?.Sites.Select(site =>
             {
-                (site as Site).GeneratedPassword = GeneratePassword(site);
+                (site as Site).SetGeneratedPassword( GeneratePassword(site), !Settings.PasswordsVisible );
                 return site;
             });
             Sites = new ObservableItemCollection<ISite>(preparedSites);
@@ -126,13 +130,18 @@ namespace MasterPasswordUWP.ViewModels
             await Task.CompletedTask;
         }
 
+        private void ApplySortOrderToFilteredSites()
+        {
+            FilteredSites.AscendingOrder = SitesOrder != SitesOrder.LastUse;
+        }
+
         private async void OnPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
             if ( args.PropertyName == nameof(SitesOrder) || args.PropertyName == nameof(SearchString) )
             {
                 if (args.PropertyName == nameof(SitesOrder))
                 {
-                    FilteredSites.AscendingOrder = SitesOrder != SitesOrder.LastUse;
+                    ApplySortOrderToFilteredSites();
                 }
                 FilteredSites.RefreshView();
             }
@@ -160,8 +169,8 @@ namespace MasterPasswordUWP.ViewModels
             }
 
             SitesOrder = Settings.LastSortBy;
-
-            if (Sites == null)
+            ApplySortOrderToFilteredSites();
+            if (Sites == null || Settings.PopPasswordsVisibleChangedFlag())
             {
                 await ApplyModelToViewModel();
             }
@@ -175,7 +184,7 @@ namespace MasterPasswordUWP.ViewModels
                     var detailSite = param.Parameter as ISite;
 
                     // regenerate password
-                    (detailSite as Site).GeneratedPassword = GeneratePassword( detailSite );
+                    (detailSite as Site).SetGeneratedPassword( GeneratePassword( detailSite ), !Settings.PasswordsVisible );
 
                     var replaceTarget = Sites.FirstOrDefault(site => site.Identifier == detailSite.Identifier);
                     if (replaceTarget != null)
@@ -259,7 +268,7 @@ namespace MasterPasswordUWP.ViewModels
 
         public Site CreateEmptySite()
         {
-            var r = new Site { UserName = string.Empty, SiteName = string.Empty, SiteCounter = 1, PasswordType = SiteType.GeneratedMaximum, AlgorithmVersion = KeyVersion.Current };
+            var r = new Site { UserName = string.Empty, SiteName = string.Empty, SiteCounter = 1, PasswordType = SiteType.GeneratedMaximum, AlgorithmVersion = KeyVersion.Current, LastUsed = DateTime.Now.ToFileTimeUtc() };
             return r;
         }
 
